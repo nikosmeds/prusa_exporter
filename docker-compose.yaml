@@ -5,6 +5,8 @@ networks:
 
 volumes:
   prometheus_data:
+  grafana_storage:
+
 services:
   node-exporter:
     image: prom/node-exporter:v1.5.0
@@ -54,7 +56,8 @@ services:
       - prusa
 
   exporter:
-    image: pubeldev/prusa_exporter:latest
+    image: pubeldev/prusa_exporter:v0.9.3
+    restart: always
     container_name: exporter
     volumes:
       - type: bind
@@ -65,3 +68,13 @@ services:
     command: '--config.file=/app/prusa.yml'
     networks:
       - prusa
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - prusa
+    volumes:
+      - grafana_storage:/var/lib/grafana
